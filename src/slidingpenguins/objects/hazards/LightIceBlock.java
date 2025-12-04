@@ -3,7 +3,7 @@ package slidingpenguins.objects.hazards;
 import slidingpenguins.objects.ITerrainObject;
 import slidingpenguins.objects.ISlidable;
 import slidingpenguins.objects.penguins.Penguin;
-import slidingpenguins.core.Directions;
+import slidingpenguins.core.Direction;
 
 /**
  * Light ice block.
@@ -13,13 +13,13 @@ import slidingpenguins.core.Directions;
 public class LightIceBlock extends Hazard implements ISlidable {
 
     private boolean sliding;
-    private Directions direction;
+    private Direction direction;
 
     /**
-     * This block can slide, so we pass true.
+     * This block can slide, so we pass true to Hazard constructor.
      */
     public LightIceBlock() {
-        super(true);
+        super();
         this.sliding = false;
         this.direction = null;
     }
@@ -29,12 +29,19 @@ public class LightIceBlock extends Hazard implements ISlidable {
         return "LB";
     }
 
-    // --- ISlidable methods (adapt names to your interface if needed) ---
+    // --- ISlidable methods ---
 
+    @Override
+    public void slide() {
+        System.out.println("LightIceBlock is sliding " + (direction != null ? direction : "") + "...");
+    }
+
+    @Override
     public boolean isMoving() {
         return sliding;
     }
 
+    @Override
     public void setMoving(boolean moving) {
         this.sliding = moving;
         if (!moving) {
@@ -42,66 +49,46 @@ public class LightIceBlock extends Hazard implements ISlidable {
         }
     }
 
-    public Directions getDirection() {
+    @Override
+    public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(Directions dir) {
+    @Override
+    public void setDirection(Direction dir) {
         this.direction = dir;
     }
 
     // --- Collision logic ---
 
-    /**
-     * What happens when something hits this block.
-     */
     @Override
     public void onCollision(ITerrainObject incomer) {
-        if (incomer == null) {
-            return;
-        }
+        if (incomer == null) return;
 
         // Case 1: penguin hits this block
         if (incomer instanceof Penguin) {
             Penguin p = (Penguin) incomer;
-
-            // penguin is stunned for one turn
-            p.stun(); // this method should exist in Penguin
+            p.stun(); // Penguin class must have stun() method
 
             // block starts to slide in penguin's direction
             if (p.getDirection() != null) {
                 startSliding(p.getDirection());
             }
         }
-        // Case 2: another sliding object hits this block (for example SeaLion)
+        // Case 2: another sliding object hits this block
         else if (incomer instanceof ISlidable) {
             ISlidable slider = (ISlidable) incomer;
-
             if (slider.isMoving()) {
-                // take its direction
                 startSliding(slider.getDirection());
-                // the other object can stop now
                 slider.setMoving(false);
             }
         }
     }
 
-    /**
-     * Start sliding in a direction.
-     */
-    public void startSliding(Directions dir) {
-        if (dir == null) {
-            return;
-        }
+    public void startSliding(Direction dir) {
+        if (dir == null) return;
         this.direction = dir;
         this.sliding = true;
-    }
-
-    /**
-     * Stop sliding (for example: fell off or plugged a hole).
-     */
-    public void stopSliding() {
-        this.sliding = false;
-        this.direction = null;
+        slide(); // We can call slide method as a trigger
     }
 }
