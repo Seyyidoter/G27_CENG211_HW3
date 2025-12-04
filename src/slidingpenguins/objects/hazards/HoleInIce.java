@@ -1,31 +1,26 @@
 package slidingpenguins.objects.hazards;
 
 import slidingpenguins.objects.ITerrainObject;
+import slidingpenguins.objects.ISlidable;
 import slidingpenguins.objects.penguins.Penguin;
 
 /**
- * Hole in ice.
- * If it is open, it is dangerous.
- * If it is plugged, it is safe to pass.
+ * Represents a hole in the ice.
+ * Penguins and sliding hazards can fall into it.
+ * Sliding hazards (LightIceBlock, SeaLion) plug the hole.
  */
 public class HoleInIce extends Hazard {
 
     private boolean plugged;
 
-    /**
-     * Hole cannot slide, so we pass false.
-     * At start it is open (dangerous).
-     */
     public HoleInIce() {
-        super(false);
+        super();
         this.plugged = false;
     }
 
-    /**
-     * "HI" for open hole, "PH" for plugged hole.
-     */
     @Override
     public String getSymbol() {
+        // Returns "PH" if plugged, "HI" if open
         return plugged ? "PH" : "HI";
     }
 
@@ -34,39 +29,29 @@ public class HoleInIce extends Hazard {
     }
 
     /**
-     * Plug the hole.
-     * Used when a sliding hazard falls into it.
+     * Plugs the hole when a sliding object (like LightIceBlock or SeaLion) falls into it.
      */
     public void plug() {
         this.plugged = true;
     }
 
-    /**
-     * What happens when something comes to this cell.
-     */
     @Override
     public void onCollision(ITerrainObject incomer) {
-        if (incomer == null) {
+        // If the hole is plugged or the incomer is null, it acts like a safe square.
+        if (incomer == null || plugged) {
             return;
         }
 
-        // If plugged, it is just like normal ice.
-        if (plugged) {
-            return;
-        }
-
-        // Case 1: a penguin falls into the hole
+        // Case 1: A Penguin falls into the hole.
         if (incomer instanceof Penguin) {
             Penguin p = (Penguin) incomer;
-            // penguin is removed from the game (falls into water)
-            p.fallIntoWater(); // TODO: your teammate should add this method
+            // The penguin falls into water and is removed from the game.
+            p.fallIntoWater();
         }
-        // Case 2: a sliding hazard (LightIceBlock or SeaLion) falls into it
-        else if (incomer instanceof LightIceBlock || incomer instanceof SeaLion) {
-            // sliding object plugs the hole
+        // Case 2: A sliding hazard (LightIceBlock or SeaLion) falls into the hole.
+        else if (incomer instanceof ISlidable) {
+            // The sliding object plugs the hole and disappears (Terrain logic will not re-place it).
             this.plug();
-            // engine should remove the hazard from the grid
-            // (for example: IcyTerrain or TerrainGrid will handle it)
         }
     }
 }
