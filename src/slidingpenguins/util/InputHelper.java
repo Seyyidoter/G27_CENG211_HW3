@@ -1,7 +1,7 @@
 package slidingpenguins.util;
 
 import java.util.Scanner;
-import slidingpenguins.core.Directions;
+import slidingpenguins.core.Direction;
 
 /**
  * Utility class to handle user inputs securely.
@@ -19,17 +19,17 @@ public class InputHelper {
      * @param message The prompt message to display to the user.
      * @return The valid Directions enum value selected by the user.
      */
-    public static Directions getDirection(String message) {
+    public static Direction getDirection(String message) {
         while (true) {
             System.out.print(message);
             // Read input, trim spaces, and convert to uppercase to handle "u", "U ", etc.
             String input = scanner.nextLine().trim().toUpperCase(); 
 
             switch (input) {
-                case "U": return Directions.UP;
-                case "D": return Directions.DOWN;
-                case "L": return Directions.LEFT;
-                case "R": return Directions.RIGHT;
+                case "U": return Direction.UP;
+                case "D": return Direction.DOWN;
+                case "L": return Direction.LEFT;
+                case "R": return Direction.RIGHT;
                 default:
                     // If input is incorrect, show error and loop again 
                     System.out.println("Invalid direction! Please enter U (Up), D (Down), L (Left), or R (Right).");
