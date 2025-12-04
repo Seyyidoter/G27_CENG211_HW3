@@ -14,7 +14,7 @@ public class HeavyIceBlock extends Hazard {
      * This block cannot slide, so we pass false.
      */
     public HeavyIceBlock() {
-        super(false);
+        super();
     }
 
     /**
