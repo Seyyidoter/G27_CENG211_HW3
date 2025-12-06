@@ -14,9 +14,6 @@ public class SeaLion extends Hazard implements ISlidable {
     private boolean sliding;
     private Direction direction;
 
-    /**
-     * Sea lion can slide, so we pass true.
-     */
     public SeaLion() {
         super();
         this.sliding = false;
