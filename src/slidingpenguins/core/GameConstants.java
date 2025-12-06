@@ -17,7 +17,10 @@ public class GameConstants {
     
     // Game Rules
     public static final int MAX_TURNS = 4;
+
+    // AI Behavior
+    public static final int AI_ABILITY_USE_CHANCE = 30;
     
     // Visualization constants (can be used for formatting)
-    public static final String EMPTY_CELL_SYMBOL = "   "; // 3 spaces for alignment
+    public static final String EMPTY_CELL_SYMBOL = "    "; // 4 spaces for alignment
 }
