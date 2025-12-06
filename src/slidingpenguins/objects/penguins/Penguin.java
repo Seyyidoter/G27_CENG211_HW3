@@ -60,7 +60,11 @@ public abstract class Penguin implements ISlidable {
      * Returns the list of collected food items (for scoreboard).
      */
     public List<Food> getCollectedFoods() {
-        return collectedFoods;
+        List<Food> copyList = new ArrayList<>();
+        for (Food f : this.collectedFoods) {
+            copyList.add(new Food(f));
+        }
+        return copyList;
     }
 
     public void stun() {
