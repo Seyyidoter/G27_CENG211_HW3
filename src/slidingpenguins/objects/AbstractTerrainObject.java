@@ -5,7 +5,7 @@ package slidingpenguins.objects;
  * Centralizes the coordinate logic (x, y) to prevent code duplication.
  */
 public abstract class AbstractTerrainObject implements ITerrainObject {
-    
+
     protected int x;
     protected int y;
 
@@ -46,6 +46,6 @@ public abstract class AbstractTerrainObject implements ITerrainObject {
     public void setY(int y) {
         this.y = y;
     }
-    
+
     // getSymbol() is left for concrete classes or interface default.
 }
