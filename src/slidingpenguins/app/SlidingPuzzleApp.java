@@ -11,7 +11,7 @@ public class SlidingPuzzleApp {
 
     public static void main(String[] args) {
         // Create the terrain (this will generate penguins, hazards and food)
-        IcyTerrain terrain = new IcyTerrain();
+        IcyTerrain terrain = new IcyTerrain(); // You can also test with random seed
         // Delegate the game loop and menu logic to IcyTerrain
         terrain.startGame();
     }
