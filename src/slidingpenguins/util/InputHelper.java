@@ -10,7 +10,7 @@ import slidingpenguins.core.Direction;
 public class InputHelper {
     
     // Using a single static Scanner prevents resource leaks and conflicts.
-    // We do NOT close this scanner because closing System.in disables input for the whole app.
+    // We do not close this scanner because closing System.in disables input for the whole app.
     private static final Scanner scanner = new Scanner(System.in);
 
     /**
