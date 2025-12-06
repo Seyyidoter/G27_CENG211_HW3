@@ -1,8 +1,9 @@
 package slidingpenguins.objects.food;
 
-
-//Enumeration for the different types of food items found on the terrain.
-
+/**
+ * Enumeration for the different types of food items found on the terrain.
+ * Each type has a short notation used for display on the grid.
+ */
 public enum FoodType {
     KRILL("Kr"),        // Krill
     CRUSTACEAN("Cr"),   // Crustacean
