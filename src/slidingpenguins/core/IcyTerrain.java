@@ -609,7 +609,7 @@ public class IcyTerrain {
     }
 
     public List<Penguin> getPenguins() {
-        return penguins;
+        return new ArrayList<>(this.penguins);
     }
 
     public Penguin getMyPenguin() {
@@ -617,7 +617,11 @@ public class IcyTerrain {
     }
 
     public List<List<ITerrainObject>> getGrid() {
-        return grid;
+        List<List<ITerrainObject>> copyGrid = new ArrayList<>();
+        for (List<ITerrainObject> row : this.grid) {
+            copyGrid.add(new ArrayList<>(row));
+        }
+        return copyGrid;
     }
 
     // ----------------------
