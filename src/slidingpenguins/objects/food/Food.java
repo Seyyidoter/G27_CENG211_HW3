@@ -23,6 +23,12 @@ public class Food implements ITerrainObject {
         this.weight = weight;
     }
 
+    public Food(Food other) {
+        this(other.getType(), other.getWeight());
+        this.setX(other.getX());
+        this.setY(other.getY());
+    }
+
     public int getWeight() {
         return weight;
     }
