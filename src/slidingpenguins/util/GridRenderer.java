@@ -24,9 +24,9 @@ public class GridRenderer {
 
         List<List<ITerrainObject>> grid = terrain.getGrid();
 
-        // IMPORTANT: "The initial icy terrain grid:" and
+        // Important: "The initial icy terrain grid:" and
         // "New state of the grid:" are printed from IcyTerrain.startGame().
-        // So we do NOT print an extra title here.
+        // So we do not print an extra title here.
         // Just print the grid itself like in the PDF example.
 
         // Print the top border of the grid
@@ -42,9 +42,8 @@ public class GridRenderer {
 
                 String cellContent;
                 if (obj == null) {
-                    cellContent = "    "; // 4 spaces for empty cell
+                    cellContent = GameConstants.EMPTY_CELL_SYMBOL;
                 } else {
-                    // Example symbols: "P1", "HB", "Kr"
                     cellContent = String.format(" %-3s", obj.getSymbol());
                 }
 
@@ -59,10 +58,11 @@ public class GridRenderer {
 
     /**
      * Helper method to print the horizontal dashed lines between rows.
-     * Dynamic length based on column count.
+     * Creates the grid border effect matching the PDF example output.
+     * Dynamic length based on column count (5 dashes per column + 1).
      */
     private static void printHorizontalBorder() {
-        // NOTE: No leading space, to match the PDF's
+        // Note: No leading space, to match the PDF's
         // "-------------------------------------------------------------"
         for (int i = 0; i < GameConstants.GRID_COLS; i++) {
             System.out.print("-----");
