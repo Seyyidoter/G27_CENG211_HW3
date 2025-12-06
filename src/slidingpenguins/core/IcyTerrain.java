@@ -431,12 +431,16 @@ public class IcyTerrain {
                         break;
                     }
 
-                    if (slidable.getDirection() != direction) {
-                        direction = slidable.getDirection();
+                    if (stopMovement) {
+                        break;
+                    }
+
+                    Direction newDir = slidable.getDirection();
+                    if (newDir != null && newDir != direction) {
+                        direction = newDir;
                         continue;
                     }
-                    if (stopMovement) break;
-
+                    
                     currentX = nextX;
                     currentY = nextY;
                     stepsTaken++;
