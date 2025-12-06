@@ -2,14 +2,13 @@ package slidingpenguins.objects.penguins;
 
 import java.util.ArrayList;
 import java.util.List;
+import slidingpenguins.objects.AbstractTerrainObject;
 import slidingpenguins.objects.ISlidable;
 import slidingpenguins.objects.food.Food;
 import slidingpenguins.core.Direction;
 
-public abstract class Penguin implements ISlidable {
+public abstract class Penguin extends AbstractTerrainObject implements ISlidable {
 
-    protected int x;
-    protected int y;
     protected String id;
     protected List<Food> collectedFoods;
 
@@ -18,11 +17,10 @@ public abstract class Penguin implements ISlidable {
     protected boolean isStunned;
     protected Direction currentDirection;
     protected boolean moving;
-
-    // Special ability usage flag (each penguin can use it at most once)
     protected boolean abilityUsed;
 
     public Penguin(String id) {
+        super();
         this.id = id;
         this.collectedFoods = new ArrayList<>();
         this.isEliminated = false;
@@ -31,10 +29,36 @@ public abstract class Penguin implements ISlidable {
         this.abilityUsed = false;
     }
 
+    /**
+     * Copy Constructor for Penguin.
+     * Useful if we need to clone a penguin state.
+     */
+    public Penguin(Penguin other) {
+        super(other); // Copies x and y
+        this.id = other.id;
+        this.isEliminated = other.isEliminated;
+        this.isStunned = other.isStunned;
+        this.abilityUsed = other.abilityUsed;
+
+        // Deep copy of the food list
+        this.collectedFoods = new ArrayList<>();
+        for (Food f : other.collectedFoods) {
+            this.collectedFoods.add(new Food(f));
+        }
+    }
+
+    /**
+     * Adds a food item to the penguin's collection.
+     * @param food The food item to add
+     */
     public void addFood(Food food) {
         collectedFoods.add(food);
     }
 
+    /**
+     * Removes the lightest food item from the penguin's collection.
+     * Called when hitting a HeavyIceBlock. Does nothing if no food is carried.
+     */
     public void dropLightestFood() {
         if (collectedFoods.isEmpty()) return;
 
@@ -48,6 +72,10 @@ public abstract class Penguin implements ISlidable {
         System.out.println(id + " lost the lightest food item: " + lightest.getType());
     }
 
+    /**
+     * Calculates the total weight of all collected food.
+     * @return The sum of all food weights
+     */
     public int getTotalFoodWeight() {
         int total = 0;
         for (Food f : collectedFoods) {
@@ -57,99 +85,71 @@ public abstract class Penguin implements ISlidable {
     }
 
     /**
-     * Returns the list of collected food items (for scoreboard).
+     * Returns a DEEP COPY of the collected foods list.
+     * This prevents privacy leaks; external classes cannot modify the penguin's actual stomach.
      */
     public List<Food> getCollectedFoods() {
         List<Food> copyList = new ArrayList<>();
         for (Food f : this.collectedFoods) {
+            // Use the copy constructor of Food
             copyList.add(new Food(f));
         }
         return copyList;
     }
 
+    /**
+     * Stuns the penguin, causing them to skip their next turn.
+     * Called when colliding with a LightIceBlock.
+     */
     public void stun() {
         this.isStunned = true;
         System.out.println(id + " is stunned via LightIceBlock!");
     }
 
+    /**
+     * Eliminates the penguin from active play.
+     * Called when falling into water or a HoleInIce.
+     */
     public void fallIntoWater() {
         this.isEliminated = true;
         System.out.println(id + " fell into the water!");
     }
 
-    // --- Ability usage helpers ---
-
     /**
-     * Returns true if this penguin has already used its special ability.
+     * Checks if the penguin has used their special ability.
+     * @return true if ability has been used, false otherwise
      */
     public boolean hasUsedAbility() {
         return abilityUsed;
     }
 
     /**
-     * Marks that this penguin has used its special ability.
-     * Subclasses should call this once inside their useSpecialAbility() implementation.
+     * Marks the penguin's special ability as used.
+     * Called by subclasses when activating their ability.
      */
     protected void markAbilityUsed() {
         this.abilityUsed = true;
     }
 
-    // --- Getters and Setters ---
-
-    public String getId() {
-        return id;
-    }
-
-    public boolean isEliminated() {
-        return isEliminated;
-    }
-
-    public boolean isStunned() {
-        return isStunned;
-    }
-
-    public void setStunned(boolean stunned) {
-        this.isStunned = stunned;
-    }
+    // Getters and Setters
+    public String getId() { return id; }
+    public boolean isEliminated() { return isEliminated; }
+    public boolean isStunned() { return isStunned; }
+    public void setStunned(boolean stunned) { this.isStunned = stunned; }
 
     @Override
-    public void setDirection(Direction direction) {
-        this.currentDirection = direction;
-    }
-
+    public void setDirection(Direction direction) { this.currentDirection = direction; }
     @Override
-    public Direction getDirection() {
-        return currentDirection;
-    }
-
+    public Direction getDirection() { return currentDirection; }
     @Override
-    public boolean isMoving() {
-        return moving;
-    }
-
+    public boolean isMoving() { return moving; }
     @Override
-    public void setMoving(boolean moving) {
-        this.moving = moving;
-    }
-
-    // --- ISlidable and ITerrainObject Implementation ---
+    public void setMoving(boolean moving) { this.moving = moving; }
 
     @Override
     public void slide() {
         System.out.println(id + " is sliding...");
     }
-
-    @Override
-    public int getX() { return x; }
-
-    @Override
-    public void setX(int x) { this.x = x; }
-
-    @Override
-    public int getY() { return y; }
-
-    @Override
-    public void setY(int y) { this.y = y; }
 
     @Override
     public String getSymbol() { return id; }
