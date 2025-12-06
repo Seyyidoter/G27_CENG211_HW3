@@ -6,6 +6,10 @@ import java.util.List;
 import slidingpenguins.objects.food.Food;
 import slidingpenguins.objects.penguins.Penguin;
 
+/**
+ * Utility class for displaying the final game scoreboard.
+ * Sorts penguins by total food weight and formats the results.
+ */
 public class ScoreBoard {
 
     /**
