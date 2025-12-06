@@ -4,7 +4,8 @@ import slidingpenguins.objects.ITerrainObject;
 
 /**
  * Interface representing a Hazard on the terrain.
- * Includes a contract for collision handling.
+ * All hazards must implement collision behavior and inherit
+ * from ITerrainObject for position tracking.
  */
 public interface IHazard extends ITerrainObject {
     /**
