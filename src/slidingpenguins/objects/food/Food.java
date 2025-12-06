@@ -1,32 +1,37 @@
 package slidingpenguins.objects.food;
 
-import slidingpenguins.objects.ITerrainObject;
+import slidingpenguins.objects.AbstractTerrainObject;
 
 /**
  * Represents a food item on the icy terrain.
  * Each food has a specific type and a weight.
  */
-public class Food implements ITerrainObject {
-    
-    private int x;
-    private int y;
-    private final int weight; // Weight is determined at creation 
+public class Food extends AbstractTerrainObject {
+
+    private final int weight;
     private final FoodType type;
 
     /**
      * Constructor for Food.
-     * @param type The type of the food (e.g., Krill, Squid).
-     * @param weight The weight of the food (1-5 units).
+     * Creates a food item with the specified type and weight.
+     * @param type The type of the food (e.g., KRILL, SQUID)
+     * @param weight The weight of the food (typically 1-5 units)
      */
     public Food(FoodType type, int weight) {
+        super();
         this.type = type;
         this.weight = weight;
     }
 
+    /**
+     * Copy Constructor: Creates a new Food object as a deep copy of another.
+     * This is essential for preventing privacy leaks when returning lists.
+     * @param other The food object to copy.
+     */
     public Food(Food other) {
-        this(other.getType(), other.getWeight());
-        this.setX(other.getX());
-        this.setY(other.getY());
+        super(other); // Copies x and y from the abstract parent
+        this.type = other.getType();
+        this.weight = other.getWeight();
     }
 
     public int getWeight() {
@@ -37,31 +42,6 @@ public class Food implements ITerrainObject {
         return type;
     }
 
-    // --- ITerrainObject Implementation ---
-
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    /**
-     * Returns the short symbol of the food type (e.g., "Kr", "Ma").
-     */
     @Override
     public String getSymbol() {
         return type.getShortName();
