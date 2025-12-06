@@ -15,9 +15,6 @@ public class LightIceBlock extends Hazard implements ISlidable {
     private boolean sliding;
     private Direction direction;
 
-    /**
-     * This block can slide, so we pass true to Hazard constructor.
-     */
     public LightIceBlock() {
         super();
         this.sliding = false;
