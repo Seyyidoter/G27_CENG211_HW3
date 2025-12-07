@@ -87,22 +87,14 @@ public class IcyTerrain {
                 }
 
 
-                if (p != myPenguin) {
-                    
-                    System.out.println("\n--- " + p.getId() + "'s Turn ---");
+                 System.out.print("\n--- " + p.getId() + "'s Turn ---");
 
-                    Direction chosenDir;
-                    boolean useAbility = false;
-                }
+                Direction chosenDir;
+                boolean useAbility = false;
 
                 // --- DECISION PHASE ---
                 if (p == myPenguin) {
-
-                    System.out.println("\n--- " + p.getId() + "'s Turn (Your Penguin) ---");
-
-                    Direction chosenDir;
-                    boolean useAbility = false;
-                    
+                    System.out.println(" (Your Penguin)\n");
                     // PLAYER LOGIC
                     if (!p.hasUsedAbility()) {
                         useAbility = InputHelper.getYesNo(
@@ -136,7 +128,7 @@ public class IcyTerrain {
                                 && rh.canAutoUseForHazard()) {
 
                             useAbility = true;
-                            System.out.println(p.getId()
+                            System.out.println("\n" + p.getId()
                                     + " (AI) sees a hazard and automatically uses its special action!");
                         } else {
                             useAbility = false;
@@ -148,15 +140,15 @@ public class IcyTerrain {
                             useAbility = random.nextInt(100) < GameConstants.AI_ABILITY_USE_CHANCE;
                         } else {
                             useAbility = false;
-                            System.out.println(p.getId() + " has already used its special action (AI).");
+                            System.out.println("\n" + p.getId() + " has already used its special action (AI).");
                         }
                     }
 
                     if (useAbility) {
-                        System.out.println(p.getId() + " chooses to USE its special action.");
+                        System.out.println("\n" + p.getId() + " chooses to USE its special action.");
                         handleSpecialActionPreparation(p, false);
                     } else {
-                        System.out.println(p.getId() + " does NOT use its special action.");
+                        System.out.println("\n" + p.getId() + " does NOT use its special action.");
                     }
                 }
 
