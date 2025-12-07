@@ -86,13 +86,23 @@ public class IcyTerrain {
                     continue;
                 }
 
-                System.out.println("\n--- " + p.getId() + "'s Turn ---");
 
-                Direction chosenDir;
-                boolean useAbility = false;
+                if (p != myPenguin) {
+                    
+                    System.out.println("\n--- " + p.getId() + "'s Turn ---");
+
+                    Direction chosenDir;
+                    boolean useAbility = false;
+                }
 
                 // --- DECISION PHASE ---
                 if (p == myPenguin) {
+
+                    System.out.println("\n--- " + p.getId() + "'s Turn (Your Penguin) ---");
+
+                    Direction chosenDir;
+                    boolean useAbility = false;
+                    
                     // PLAYER LOGIC
                     if (!p.hasUsedAbility()) {
                         useAbility = InputHelper.getYesNo(
