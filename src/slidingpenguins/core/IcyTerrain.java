@@ -514,7 +514,7 @@ public class IcyTerrain {
     private void handleFallingIntoWater(ISlidable obj) {
         if (obj instanceof Penguin) {
             ((Penguin) obj).fallIntoWater();
-            System.out.println(obj.getSymbol() + " removed from game.");
+            System.out.println("\n*** " + obj.getSymbol() + " IS REMOVED FROM THE GAME!");
         } else if (obj instanceof LightIceBlock || obj instanceof SeaLion) {
             System.out.println(obj.getSymbol() + " fell into water and is gone.");
         }
@@ -559,8 +559,10 @@ public class IcyTerrain {
     }
 
     /**
-     * Returns a copy of the grid (copying each row).
-     * Protects the structure of the game grid from external modifications.
+     * Returns a shallow copy of the grid.
+     * The outer list and row lists are copied to avoid structural modification,
+     * but ITerrainObject references are shared for performance reasons.
+     * This method is intended for read-only visualization (GridRenderer).
      */
     public List<List<ITerrainObject>> getGrid() {
         List<List<ITerrainObject>> copyGrid = new ArrayList<>();
@@ -588,7 +590,7 @@ public class IcyTerrain {
             } else {
                 moveDir = decideSafeOneStep(p);
             }
-            System.out.println(p.getId() + " takes a safe step " + moveDir);
+            System.out.println(p.getId() + " moves one square to the " + moveDir + ".");
             moveObject(p, moveDir, 1);
         }
     }
