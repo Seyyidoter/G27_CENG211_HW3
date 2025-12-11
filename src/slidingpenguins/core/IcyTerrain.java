@@ -57,116 +57,132 @@ public class IcyTerrain {
      * Starts the game loop and handles turns, inputs and rendering.
      */
     public void startGame() {
+        // Initial Game Setup and Info
+        initializeGame();
+    
+        for (int turn = 1; turn <= GameConstants.MAX_TURNS; turn++) {
+            System.out.println("\n*** Turn " + turn + " ***");
+            
+            // --- Turn Execution ---
+            for (Penguin p : penguins) {
+                handlePenguinTurn(p);
+            }
+    
+            // Check for win/loss conditions if necessary (not shown in original, but good practice)
+            // if (checkGameOver()) break;
+        }
+    
+        // Game End
+        endGame();
+    }
+    
+    // ==========================================================
+    // Helper Methods (The extracted logic)
+    // ==========================================================
+    
+    private void initializeGame() {
         System.out.println("Welcome to Sliding Penguins Puzzle Game App.");
         System.out.println("An " + GameConstants.GRID_ROWS + "x" + GameConstants.GRID_COLS
                 + " icy terrain grid is being generated.");
         System.out.println("Penguins, Hazards, and Food items are also being generated.");
-
+    
         // Ensure strictly P1, P2, P3 turn order
         penguins.sort(Comparator.comparing(Penguin::getId));
-
+    
         printLegend();
-
         System.out.println("\nThe initial icy terrain grid:");
         GridRenderer.render(this);
         printPenguinInfo(penguins, myPenguin);
-
-        for (int turn = 1; turn <= GameConstants.MAX_TURNS; turn++) {
-            System.out.println("\n*** Turn " + turn + " ***");
-
-            for (Penguin p : penguins) {
-                if (p.isEliminated()) {
-                    System.out.println(p.getId() + " is eliminated and skips turn.");
-                    continue;
-                }
-
-                if (p.isStunned()) {
-                    System.out.println(p.getId() + " is stunned and skips this turn!");
-                    p.setStunned(false);
-                    continue;
-                }
-
-
-                 System.out.print("\n--- " + p.getId() + "'s Turn ---");
-
-                Direction chosenDir;
-                boolean useAbility = false;
-
-                // --- DECISION PHASE ---
-                if (p == myPenguin) {
-                    System.out.println(" (Your Penguin)\n");
-                    // PLAYER LOGIC
-                    if (!p.hasUsedAbility()) {
-                        useAbility = InputHelper.getYesNo(
-                                "Will " + p.getId() + " use its special action? (Y/N): "
-                        );
-                        if (useAbility) {
-                            handleSpecialActionPreparation(p, true);
-                        }
-                    } else {
-                        System.out.println(p.getId() + " has already used its special action.");
-                    }
-
-                    chosenDir = InputHelper.getDirection(
-                            "Which direction will " + p.getId() + " move? (U/D/L/R): "
-                    );
-
-                } else {
-                    // AI LOGIC
-                    chosenDir = decideAIDirection(p);
-
-                    if (p instanceof RockhopperPenguin) {
-                        // Rockhopper: no 30% random chance.
-                        // They automatically use their action the first time they
-                        // decide to move in the direction of a hazard.
-                        RockhopperPenguin rh = (RockhopperPenguin) p;
-                        ITerrainObject target = peekObject(p.getX(), p.getY(), chosenDir);
-
-                        if (!p.hasUsedAbility()
-                                && target instanceof Hazard
-                                && !(target instanceof HoleInIce)
-                                && rh.canAutoUseForHazard()) {
-
-                            useAbility = true;
-                            System.out.println("\n" + p.getId()
-                                    + " (AI) sees a hazard and automatically uses its special action!");
-                        } else {
-                            useAbility = false;
-                        }
-
-                    } else {
-                        // Other AI penguins keep the 30% chance rule
-                        if (!p.hasUsedAbility()) {
-                            useAbility = random.nextInt(100) < GameConstants.AI_ABILITY_USE_CHANCE;
-                        } else {
-                            useAbility = false;
-                            System.out.println("\n" + p.getId() + " has already used its special action (AI).");
-                        }
-                    }
-
-                    if (useAbility) {
-                        System.out.println("\n" + p.getId() + " chooses to USE its special action.");
-                        handleSpecialActionPreparation(p, false);
-                    } else {
-                        System.out.println("\n" + p.getId() + " does NOT use its special action.");
-                    }
-                }
-
-                System.out.println(p.getId() + " chooses to move " + chosenDir);
-
-                // --- EXECUTION PHASE ---
-                int limit = -1;
-                if (useAbility) {
-                    if (p instanceof KingPenguin) limit = 5;
-                    if (p instanceof EmperorPenguin) limit = 3;
-                }
-
-                moveObject(p, chosenDir, limit);
-                System.out.println("New state of the grid:");
-                GridRenderer.render(this);
-            }
+    }
+    
+    private void handlePenguinTurn(Penguin p) {
+        // 1. Check for Skip Conditions
+        if (p.isEliminated()) {
+            System.out.println(p.getId() + " is eliminated and skips turn.");
+            return;
         }
-
+        if (p.isStunned()) {
+            System.out.println(p.getId() + " is stunned and skips this turn!");
+            p.setStunned(false);
+            return;
+        }
+    
+        System.out.print("\n--- " + p.getId() + "'s Turn ---");
+        
+        // 2. Decision Phase (Ability & Direction)
+        Direction chosenDir;
+        boolean useAbility;
+    
+        if (p == myPenguin) {
+            System.out.println(" (Your Penguin)\n");
+            chosenDir = handlePlayerDecision(p);
+            useAbility = p.hasUsedAbility() ? false : InputHelper.getYesNo(
+                    "Will " + p.getId() + " use its special action? (Y/N): "
+            );
+            if (useAbility) handleSpecialActionPreparation(p, true);
+        } else {
+            chosenDir = decideAIDirection(p);
+            useAbility = handleAIDecision(p, chosenDir);
+        }
+    
+        System.out.println(p.getId() + " chooses to move " + chosenDir);
+    
+        // 3. Execution Phase
+        int limit = calculateMoveLimit(p, useAbility);
+        moveObject(p, chosenDir, limit);
+        
+        System.out.println("New state of the grid:");
+        GridRenderer.render(this);
+    }
+    
+    private Direction handlePlayerDecision(Penguin p) {
+        if (p.hasUsedAbility()) {
+            System.out.println(p.getId() + " has already used its special action.");
+        }
+        return InputHelper.getDirection(
+                "Which direction will " + p.getId() + " move? (U/D/L/R): "
+        );
+    }
+    
+    private boolean handleAIDecision(Penguin p, Direction chosenDir) {
+        if (p.hasUsedAbility()) {
+            System.out.println("\n" + p.getId() + " has already used its special action (AI).");
+            return false;
+        }
+    
+        boolean useAbility = false;
+    
+        if (p instanceof RockhopperPenguin rh) {
+            ITerrainObject target = peekObject(p.getX(), p.getY(), chosenDir);
+            if (target instanceof Hazard && !(target instanceof HoleInIce) && rh.canAutoUseForHazard()) {
+                useAbility = true;
+                System.out.println("\n" + p.getId()
+                        + " (AI) sees a hazard and automatically uses its special action!");
+            }
+        } else {
+            // Other AI penguins: 30% chance rule
+            useAbility = random.nextInt(100) < GameConstants.AI_ABILITY_USE_CHANCE;
+        }
+    
+        if (useAbility) {
+            System.out.println("\n" + p.getId() + " chooses to USE its special action.");
+            handleSpecialActionPreparation(p, false);
+        } else {
+            System.out.println("\n" + p.getId() + " does NOT use its special action.");
+        }
+        return useAbility;
+    }
+    
+    private int calculateMoveLimit(Penguin p, boolean useAbility) {
+        if (!useAbility) return -1;
+        
+        if (p instanceof KingPenguin) return 5;
+        if (p instanceof EmperorPenguin) return 3;
+        
+        return -1; // Default or no special limit
+    }
+    
+    private void endGame() {
         System.out.println("\nGAME OVER");
         printScoreboard(penguins, myPenguin);
     }
